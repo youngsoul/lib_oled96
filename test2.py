@@ -4,10 +4,8 @@ from lib_oled96 import ssd1306
 from PIL import Image, ImageDraw, ImageFont
 import time
 
-from smbus import SMBus
-i2cbus = SMBus(1)        # 1 = Raspberry Pi but NOT early REV1 board
 
-oled = ssd1306(i2cbus, flip_screen=True)   # create oled object, nominating the correct I2C bus, default address
+oled = ssd1306(flip_screen=True)   # create oled object, nominating the correct I2C bus, default address
 while True:
         # we are ready to do some output ...
         fnt = ImageFont.truetype('/home/pi/oled/lib_oled96/FreeMono.ttf', 18)

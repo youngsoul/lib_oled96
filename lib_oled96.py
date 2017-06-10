@@ -20,14 +20,15 @@
 # which can be incrementally changed. This canvas needs coded "display()" calls to push to the hardware.
 
 from PIL import Image, ImageDraw, ImageOps
+from smbus import SMBus
 
 
 class ssd1306():
 
-    def __init__(self, bus, address=0x3C, flip_screen=False):
+    def __init__(self, address=0x3C, flip_screen=False):
         self.cmd_mode = 0x00
         self.data_mode = 0x40
-        self.bus = bus
+        self.bus = SMBus(1)        # 1 = Raspberry Pi but NOT early REV1 board
         self.addr = address
         self.width = 128
         self.height = 64

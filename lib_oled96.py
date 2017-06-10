@@ -19,12 +19,12 @@
 # Hull's (clever) auto-displaying "canvas" is replaced by a persistent draw object
 # which can be incrementally changed. This canvas needs coded "display()" calls to push to the hardware.
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageOps
 
 
 class ssd1306():
 
-    def __init__(self, bus, address=0x3C):
+    def __init__(self, bus, address=0x3C, flip_screen=False):
         self.cmd_mode = 0x00
         self.data_mode = 0x40
         self.bus = bus
@@ -34,6 +34,7 @@ class ssd1306():
         self.pages = int(self.height / 8)
         self.image = Image.new('1', (self.width, self.height))
         self.canvas = ImageDraw.Draw(self.image) # this is a "draw" object for preparing display contents
+        self.flip_screen = flip_screen
 
         self._command(
             const.DISPLAYOFF,
@@ -84,7 +85,12 @@ class ssd1306():
             const.COLUMNADDR, 0x00, self.width-1,  # Column start/end address
             const.PAGEADDR,   0x00, self.pages-1)  # Page start/end address
 
-        pix = list(self.image.getdata())
+        display_image = self.image
+        if self.flip_screen:
+            display_image = ImageOps.mirror(self.image)
+            display_image = ImageOps.flip(display_image)
+
+        pix = list(display_image.getdata())
         step = self.width * 8
         buf = []
         for y in range(0, self.pages * step, step):
